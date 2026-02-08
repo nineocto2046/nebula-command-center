@@ -1,1 +1,3 @@
-# No longer needed - static HTML deployment
+# This file is no longer needed - using static HTML deployment
+# No Python dependencies required for static site
+# Deleted as part of migration to Netlify static hosting
