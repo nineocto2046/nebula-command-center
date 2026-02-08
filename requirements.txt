@@ -1,0 +1,2 @@
+# No requirements needed - static HTML dashboard
+# Uses CDN libraries: Tailwind CSS, Chart.js, Vis.js
