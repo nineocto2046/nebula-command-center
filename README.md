@@ -1,92 +1,79 @@
-# Nebula Command Center 🧠
+# Nebula Command Center
 
-Personal AI agent orchestration dashboard with knowledge graph visualization.
+A real-time dashboard for managing your Nebula AI agents and Notion workspace.
 
-## Features
+## 🚀 Quick Deploy to GitHub Pages
 
-- 📊 **Dashboard** - Overview of all agents, tasks, and activity
-- 🤖 **Agents Monitor** - Real-time monitoring of all your Nebula agents
-- 🧠 **Knowledge Graph** - Visual graph view of thoughts, tasks, ideas, and their connections
-- 📅 **Task Scheduler** - Schedule and manage tasks with automation triggers
-- ⚙️ **Settings** - Manage connected apps and preferences
-
-## Quick Deploy
-
-### Option 1: Streamlit Community Cloud (Recommended)
-
-1. Go to [share.streamlit.io](https://share.streamlit.io)
-2. Click "Create app"
-3. Select this repository: `nineocto2046/nebula-command-center`
-4. Branch: `main`
-5. Main file: `app.py`
-6. Click "Deploy"
-
-Your app will be live at: `https://[your-custom-name].streamlit.app`
-
-### Option 2: Run Locally
-
+### Option 1: Automatic (Recommended)
 ```bash
-# Clone the repository
+# Clone your repo
 git clone https://github.com/nineocto2046/nebula-command-center.git
 cd nebula-command-center
 
-# Install dependencies
-pip install -r requirements.txt
+# Copy the dashboard files
+cp /path/to/index.html .
+cp -r /path/to/.github .
 
-# Run the app
-streamlit run app.py
+# Push to GitHub
+git add .
+git commit -m "Deploy Nebula Command Center dashboard"
+git push origin main
 ```
 
-The app will open in your browser at `http://localhost:8501`
+The GitHub Actions workflow will automatically deploy to: **https://nineocto2046.github.io/nebula-command-center/**
 
-## Tech Stack
+### Option 2: Manual GitHub Pages Setup
+1. Go to https://github.com/nineocto2046/nebula-command-center/settings/pages
+2. Under "Build and deployment":
+   - Source: Deploy from a branch
+   - Branch: main
+   - Folder: / (root)
+3. Click Save
+4. Wait 1-2 minutes for deployment
 
-- **Streamlit** - Interactive web framework
-- **Plotly** - Interactive visualizations and graphs
-- **Pandas** - Data manipulation
-- **Python 3.8+**
+## ✨ Features
 
-## Connected Services
+- **Dashboard**: Real-time overview of all 9 connected agents
+- **Knowledge Graph**: Interactive visualization of agent connections
+- **Task Manager**: Sync with Notion Tasks database
+- **Scheduler**: Manage recurring automations
+- **Notion Integration**: Pre-configured with 4 databases:
+  - 🧠 Thoughts Database
+  - ✅ Tasks Database
+  - 💡 Ideas Database
+  - 🤖 Agent Jobs Database
 
-This dashboard integrates with your Nebula agents:
-- Gmail
-- GitHub  
-- Notion
-- Google Calendar
-- Google Drive
-- Google Sheets
-- Telegram
-- Netlify
+## 🔧 Notion Database IDs (Pre-configured)
 
-## Usage
+The dashboard is already configured with your Notion databases:
+- Thoughts: `7baef348-c02c-4485-baf1-0b964037d90b`
+- Tasks: `21db2dd6-ed97-4887-b48f-7e29e173e261`
+- Ideas: `599a14ce-c67b-4d51-b0dc-2a644bef0c6e`
+- Agent Jobs: `423d9075-8180-4fcb-be7a-b6408c6d0197`
 
-### Dashboard View
-Get an overview of all your agents, completed jobs, knowledge nodes, and scheduled tasks.
+## 🛠️ Technology Stack
 
-### Agents Monitor
-- View status of all connected agents
-- See job completion metrics
-- Trigger agent actions manually
-- Configure agent settings
+- **Frontend**: Pure HTML5 + Tailwind CSS
+- **Charts**: Chart.js
+- **Graph Visualization**: Vis.js
+- **Deployment**: GitHub Pages (static hosting)
+- **No build process required** ✨
 
-### Knowledge Graph
-- Visualize connections between thoughts, tasks, and ideas
-- Interactive graph with color-coded nodes:
-  - 🔵 Blue = Concepts
-  - 🟢 Green = Tasks  
-  - 🟡 Yellow = Ideas
-- Add new nodes and connections
+## 📁 File Structure
 
-### Task Scheduler
-- Create and manage tasks
-- Filter by status and priority
-- View scheduled automations
-- Set up recurring triggers
+```
+nebula-command-center/
+├── index.html              # Main dashboard (all-in-one file)
+├── .github/
+│   └── workflows/
+│       └── static.yml      # Auto-deployment workflow
+└── README.md               # This file
+```
 
-## Development
+## 🔗 Live URL
 
-Built with ❤️ for personal AI agent orchestration.
+Once deployed: https://nineocto2046.github.io/nebula-command-center/
 
-## License
+---
 
-MIT License - feel free to fork and customize!
+Built with Nebula AI 🤖
