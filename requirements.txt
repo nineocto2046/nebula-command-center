@@ -1,1 +1,0 @@
-# No Python dependencies required - this is a static HTML site
