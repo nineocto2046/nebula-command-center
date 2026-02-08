@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/vis-network.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/dist/vis-network.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .nav-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-button:hover {
+            background: #667eea;
+            color: white;
+        }
+        .nav-button.active {
+            background: #667eea;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #knowledge-graph {
+            height: 600px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .agent-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .agent-status.active {
+            background: #10b981;
+        }
+        .agent-status.inactive {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold mb-2">🧠 Nebula Command Center</h1>
+            <p class="text-lg opacity-90">Personal AI Agent Orchestration Dashboard</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex space-x-4">
+                <button class="nav-button active" onclick="showTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-button" onclick="showTab('agents')">🤖 Agents</button>
+                <button class="nav-button" onclick="showTab('knowledge')">🧠 Knowledge Graph</button>
+                <button class="nav-button" onclick="showTab('tasks')">✅ Tasks</button>
+                <button class="nav-button" onclick="showTab('scheduler')">📅 Scheduler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="text-3xl font-bold" id="stat-agents">9</div>
+                    <div class="text-sm opacity-90">Active Agents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold" id="stat-jobs">0</div>
+                    <div class="text-sm opacity-90">Jobs Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold" id="stat-nodes">0</div>
+                    <div class="text-sm opacity-90">Knowledge Nodes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold" id="stat-tasks">0</div>
+                    <div class="text-sm opacity-90">Scheduled Tasks</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Agent Activity</h3>
+                    <canvas id="activityChart"></canvas>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-4">Recent Jobs</h3>
+                    <div id="recent-jobs" class="space-y-3">
+                        <p class="text-gray-500">Loading recent jobs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agents Tab -->
+        <div id="agents" class="tab-content">
+            <div class="card">
+                <h3 class="text-2xl font-bold mb-6">Connected Agents</h3>
+                <div id="agents-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Agents will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Knowledge Graph Tab -->
+        <div id="knowledge" class="tab-content">
+            <div class="card">
+                <h3 class="text-2xl font-bold mb-4">Knowledge Graph Visualization</h3>
+                <p class="text-gray-600 mb-4">Interactive visualization of your thoughts, tasks, and ideas</p>
+                <div id="knowledge-graph"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div class="card">
+                    <h4 class="font-bold mb-2">💭 Thoughts</h4>
+                    <div class="text-3xl font-bold text-blue-600" id="thoughts-count">0</div>
+                </div>
+                <div class="card">
+                    <h4 class="font-bold mb-2">✅ Tasks</h4>
+                    <div class="text-3xl font-bold text-green-600" id="tasks-count">0</div>
+                </div>
+                <div class="card">
+                    <h4 class="font-bold mb-2">💡 Ideas</h4>
+                    <div class="text-3xl font-bold text-yellow-600" id="ideas-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Tab -->
+        <div id="tasks" class="tab-content">
+            <div class="card">
+                <h3 class="text-2xl font-bold mb-6">Task Management</h3>
+                <div class="mb-4">
+                    <button onclick="openNotionTasks()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                        ➕ Add New Task in Notion
+                    </button>
+                </div>
+                <div id="tasks-list">
+                    <p class="text-gray-500">Loading tasks...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduler Tab -->
+        <div id="scheduler" class="tab-content">
+            <div class="card">
+                <h3 class="text-2xl font-bold mb-6">Automation Scheduler</h3>
+                <div class="mb-6">
+                    <button onclick="createTrigger()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                        ➕ Create New Trigger
+                    </button>
+                </div>
+                <div id="triggers-list">
+                    <p class="text-gray-500">Loading scheduled triggers...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Configuration
+        const NOTION_CONFIG = {
+            thoughtsDb: '7baef348-c02c-4485-baf1-0b964037d90b',
+            tasksDb: '21db2dd6-ed97-4887-b48f-7e29e173e261',
+            ideasDb: '599a14ce-c67b-4d51-b0dc-2a644bef0c6e',
+            agentJobsDb: '423d9075-8180-4fcb-be7a-b6408c6d0197'
+        };
+
+        const AGENTS = [
+            { name: 'Telegram', slug: 'telegram-agent', status: 'active', icon: '💬' },
+            { name: 'GitHub', slug: 'github-agent', status: 'active', icon: '🐙' },
+            { name: 'Gmail', slug: 'gmail-agent', status: 'active', icon: '📧' },
+            { name: 'Google Sheets', slug: 'google-sheets-agent', status: 'active', icon: '📊' },
+            { name: 'Google Calendar', slug: 'google-calendar-agent', status: 'active', icon: '📅' },
+            { name: 'Google Drive', slug: 'google-drive-agent', status: 'active', icon: '📁' },
+            { name: 'Notion', slug: 'notion-agent', status: 'active', icon: '📝' },
+            { name: 'Google Slides', slug: 'google-slides-agent', status: 'active', icon: '📽️' },
+            { name: 'Netlify', slug: 'netlify-agent', status: 'active', icon: '🚀' }
+        ];
+
+        // Tab Navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'knowledge') {
+                initKnowledgeGraph();
+            }
+        }
+
+        // Initialize Dashboard
+        function initDashboard() {
+            loadAgents();
+            loadStats();
+            initActivityChart();
+            loadRecentJobs();
+        }
+
+        // Load Agents
+        function loadAgents() {
+            const agentsList = document.getElementById('agents-list');
+            agentsList.innerHTML = AGENTS.map(agent => `
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-4 hover:border-purple-400 transition">
+                    <div class="flex items-center mb-2">
+                        <span class="text-3xl mr-3">${agent.icon}</span>
+                        <div>
+                            <h4 class="font-bold">${agent.name}</h4>
+                            <span class="text-sm text-gray-500">${agent.slug}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center mt-3">
+                        <span class="agent-status ${agent.status}"></span>
+                        <span class="text-sm text-gray-600">${agent.status === 'active' ? 'Active' : 'Inactive'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load Stats
+        function loadStats() {
+            document.getElementById('stat-agents').textContent = AGENTS.length;
+            // These would be populated from Notion API in production
+            document.getElementById('stat-jobs').textContent = '0';
+            document.getElementById('stat-nodes').textContent = '0';
+            document.getElementById('stat-tasks').textContent = '0';
+        }
+
+        // Initialize Activity Chart
+        function initActivityChart() {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Agent Jobs',
+                        data: [12, 19, 15, 25, 22, 18, 20],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load Recent Jobs
+        function loadRecentJobs() {
+            const recentJobs = document.getElementById('recent-jobs');
+            // In production, this would fetch from Notion Agent Jobs DB
+            recentJobs.innerHTML = `
+                <div class="text-gray-500 text-center py-8">
+                    <p>No recent jobs yet.</p>
+                    <p class="text-sm mt-2">Jobs will appear here when agents run tasks.</p>
+                </div>
+            `;
+        }
+
+        // Initialize Knowledge Graph
+        function initKnowledgeGraph() {
+            const container = document.getElementById('knowledge-graph');
+            
+            // Sample data - in production, fetch from Notion
+            const nodes = new vis.DataSet([
+                { id: 1, label: 'Dashboard Project', color: '#3b82f6', group: 'thought' },
+                { id: 2, label: 'Deploy to Netlify', color: '#10b981', group: 'task' },
+                { id: 3, label: 'Add AI Features', color: '#f59e0b', group: 'idea' },
+                { id: 4, label: 'Knowledge Graph', color: '#3b82f6', group: 'thought' },
+                { id: 5, label: 'Create Notion DBs', color: '#10b981', group: 'task' }
+            ]);
+
+            const edges = new vis.DataSet([
+                { from: 1, to: 2 },
+                { from: 1, to: 4 },
+                { from: 2, to: 5 },
+                { from: 1, to: 3 }
+            ]);
+
+            const data = { nodes, edges };
+            const options = {
+                nodes: {
+                    shape: 'dot',
+                    size: 16,
+                    font: { size: 14, color: '#333' },
+                    borderWidth: 2
+                },
+                edges: {
+                    width: 2,
+                    color: { color: '#848484', highlight: '#667eea' }
+                },
+                physics: {
+                    stabilization: false,
+                    barnesHut: {
+                        gravitationalConstant: -30000,
+                        springConstant: 0.001,
+                        springLength: 200
+                    }
+                }
+            };
+
+            new vis.Network(container, data, options);
+
+            // Update counts
+            document.getElementById('thoughts-count').textContent = '2';
+            document.getElementById('tasks-count').textContent = '2';
+            document.getElementById('ideas-count').textContent = '1';
+        }
+
+        // Open Notion Tasks
+        function openNotionTasks() {
+            window.open(`https://notion.so/${NOTION_CONFIG.tasksDb}`, '_blank');
+        }
+
+        // Create Trigger (placeholder)
+        function createTrigger() {
+            alert('To create automation triggers, use the Nebula chat interface and say:\n\n"Create a daily trigger to sync agents to Notion at 9am"');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
