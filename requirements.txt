@@ -1,2 +1,1 @@
-# No Python dependencies required - this is now a static HTML site
-# All libraries are loaded from CDN in index.html
+# No Python dependencies required - this is a static HTML site
