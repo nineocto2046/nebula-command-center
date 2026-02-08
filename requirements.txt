@@ -1,1 +1,1 @@
-# No longer needed - using static HTML deployment
+# No longer needed - static HTML deployment
