@@ -1,3 +1,2 @@
-# This file is no longer needed - using static HTML deployment
-# No Python dependencies required for static site
-# Deleted as part of migration to Netlify static hosting
+# No Python dependencies required - this is now a static HTML site
+# All libraries are loaded from CDN in index.html
